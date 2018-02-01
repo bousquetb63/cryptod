@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const fs = require('fs');
+const cryptocurrencies = require('cryptocurrencies');
 const sleep = require('system-sleep');
 const bot = new Discord.Client({disableEveryone: true});
 const prefix = '$';
@@ -42,22 +43,15 @@ bot.on('message', message => {
     let messageArray = message.content.split(/\s+/g);
     let command = messageArray[0]
     let args = messageArray.slice(1);
-
-    let cmd = bot.commands.get(command.slice(prefix.length));
-    if(cmd) cmd.run(bot, message, args);
-
-    
-    // switch (content) {
-    // case 'giveaway':  
-    //     message.reply('Maximum number of entries? (Timesout in 2 minutes)');
-    //     // for(var i = 0; i < 10; i++){
-    //     //     sleep(1000);
-    //     //     message.channel.send(`${10-i} seconds left!`)
-    //     // }
-    //     break;
-    // default:
-    //     break;
-    // }
+    if(cryptocurrencies.symbols().includes(command.slice(prefix.length).toUpperCase())) {
+        console.log('True');
+        let cmd = bot.commands.get('pc');
+        let symbol = command.slice(prefix.length).toUpperCase()
+        if(cmd) cmd.run(bot, message, cryptocurrencies[symbol]);
+    } else {
+        let cmd = bot.commands.get(command.slice(prefix.length));
+        if(cmd) cmd.run(bot, message, args);
+    }
 });
 
 bot.login('NDA4Mzg2MzUwNzA2OTgyOTEy.DVPTbg.7GbzBEub41DDJ73Olp0wiqqMgF8');

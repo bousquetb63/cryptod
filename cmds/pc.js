@@ -2,16 +2,18 @@ module.exports.run = async (bot, message, args) => {
     const request = require('superagent');
     const currencyFormatter = require('currency-formatter');
     let cryptoName = "";
-    if (args.length > 1) {
-        args.forEach(function(element) {
-            if(cryptoName === "") {
-                cryptoName += element;
-            } else {
-                cryptoName += "-" + element;
-            }
-        });
-    } else {
-        cryptoName = args[0];
+    if(typeof args !== 'string'){
+        if (args.length > 1) {
+            args.forEach(function(element) {
+                if(cryptoName === "") {
+                    cryptoName += element;
+                } else {
+                    cryptoName += "-" + element;
+                }
+            });
+        } else {
+            cryptoName = args[0];
+        }
     }
     request
         .get(`https://api.coinmarketcap.com/v1/ticker/${cryptoName}/`)
@@ -39,7 +41,7 @@ module.exports.run = async (bot, message, args) => {
                   },
                   {
                     name: "**__Market Cap__**:",
-                    value: "Market Cap: " + mc
+                    value:  mc
                   }
                 ],
                 timestamp: new Date(),
@@ -52,6 +54,6 @@ module.exports.run = async (bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "crypto",
+    name: "pc",
     usage: "gets crypto prices"
 }
