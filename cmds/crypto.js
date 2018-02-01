@@ -2,9 +2,7 @@ module.exports.run = async (bot, message, args) => {
     const request = require('superagent');
     const currencyFormatter = require('currency-formatter');
     let cryptoName = "";
-    // console.log(args.length)
     if (args.length > 1) {
-        // console.log('entered array')
         args.forEach(function(element) {
             if(cryptoName === "") {
                 cryptoName += element;
@@ -19,10 +17,10 @@ module.exports.run = async (bot, message, args) => {
         .get(`https://api.coinmarketcap.com/v1/ticker/${cryptoName}/`)
         .end((err, res)=> {
             if (res.status == 404) {
-                message.channel.send(`Encountered error when seaching for ${data.name}! Please check spelling.`);
+                message.channel.send(`Encountered error when seaching for ${cryptoName}! Please check spelling.`);
                 return;
             }
-            console.log(res.body);
+            console.log(res);
             let data = res.body[0];
             let price = currencyFormatter.format(data.price_usd, { code: 'USD' });
             let mc = currencyFormatter.format(data.market_cap_usd, { code: 'USD' });
@@ -44,27 +42,13 @@ module.exports.run = async (bot, message, args) => {
                     value: "Market Cap: " + mc
                   }
                 ],
+                timestamp: new Date(),
+                footer: {
+                icon_url: bot.user.avatarURL,
+                text: "CryptoD"
+                }
             }});
         });
-    // axios({
-    //     method:'get',
-    //     url:`https://api.coinmarketcap.com/v1/ticker/${cryptoName}/`,
-    //     responseType:'stream'
-    //   })
-    //     .then(function(response) {
-    //         if(response.err == "id not found"){
-    //             message.channel.send(`Encountered error when seaching for ${data.name}! Please check spelling.`);
-    //             return;
-    //         }
-    //         // let data = response[0];
-    //         console.log(response.data.res);
-    //         // message.channel.send(`${data.name} is currently $${data.price_usd} and rank ${data.rank}!`);
-    //   })
-    //     .catch(function(error){
-    //         message.channel.send(`Encountered error when seaching for ${data.name}! Please check spelling.`);
-    //   });
-    // console.log(args);
-    
 }
 
 module.exports.help = {
