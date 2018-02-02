@@ -1,22 +1,23 @@
 module.exports.run = async (bot, message, args) => {
-    message.author.sendMessage(
+    message.author.send(
       {embed: {
         color: 3447003,
-        author: {
-            icon_url: bot.user.avatarURL
-        },
         title: "Heres a list of my commands and usage:",
         fields: [{
             name: "$help",
             value: "Usage: $help"
           },
           {
-            name: "$crypto",
-            value: "Usage: $crypto <Currency Name>\nExample: $crypto Bitcoin Cash"
+            name: "$pc",
+            value: "Usage: $pc <Currency Name>\nExample: $pc Bitcoin Cash"
+          },
+          {
+            name: "$<Cryptocurrency Symbol>",
+            value: "Usage: $pc <Currency Name>\nExample: $btc"
           },
           {
             name: "$giveaway",
-            value: "Usage: $giveaway <how many users can enter> <amount of time for entry>\nExample: Workin on it right now.."
+            value: "Usage: $giveaway <amount of time for entry>\nExample: Workin on it right now.."
           }
         ],
         timestamp: new Date(),

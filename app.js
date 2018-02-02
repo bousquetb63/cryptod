@@ -41,10 +41,9 @@ bot.on('ready', async () => {
 bot.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     let messageArray = message.content.split(/\s+/g);
-    let command = messageArray[0]
+    let command = messageArray[0];
     let args = messageArray.slice(1);
     if(cryptocurrencies.symbols().includes(command.slice(prefix.length).toUpperCase())) {
-        console.log('True');
         let cmd = bot.commands.get('pc');
         let symbol = command.slice(prefix.length).toUpperCase()
         if(cmd) cmd.run(bot, message, cryptocurrencies[symbol]);
@@ -54,4 +53,4 @@ bot.on('message', message => {
     }
 });
 
-bot.login('NDA4Mzg2MzUwNzA2OTgyOTEy.DVPTbg.7GbzBEub41DDJ73Olp0wiqqMgF8');
+bot.login('NDA4NzYyOTEzNDQ1MTE3OTU0.DVUxpQ.y6XMUNEGGxXFba3ae1zIWPToHyU');

@@ -22,7 +22,6 @@ module.exports.run = async (bot, message, args) => {
                 message.channel.send(`Encountered error when seaching for ${cryptoName}! Please check spelling.`);
                 return;
             }
-            console.log(res);
             let data = res.body[0];
             let price = currencyFormatter.format(data.price_usd, { code: 'USD' });
             let mc = currencyFormatter.format(data.market_cap_usd, { code: 'USD' });
