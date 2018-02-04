@@ -1,26 +1,83 @@
 const enterSymbol = "✅";
-const rn = require('random-number');
+const sleep = require('system-sleep');
+var moment = require('moment');
 
 module.exports.run = async (bot, message, args) => {
+    
     if (args.length !== 1 || isNaN(parseInt(args[0]))) {
         message.channel.send("You didnt fill out all the parameters. Use $help for more information!");
         return;
     }
-    let giveawayAnnounce = await message.channel.send('A giveaway was just started.\n React to this message with a :white_check_mark: to enter!');
-    await giveawayAnnounce.react(enterSymbol);
-
-    const reactions = await giveawayAnnounce.awaitReactions(reaction => reaction.emoji.name === enterSymbol, {time: args[0]*1000});
-    let entries = await reactions.get(enterSymbol).users.keys();
-    var options = {
-        min:  1
-      , max:  entries.length
-      , integer: true
+    var toNormalHours = (hours) => {
+        if(hours > 12){
+            return hours-12;
+        } else {
+            return hours;
+        }
     }
-    console.log(entries.get('1'));
-    // let winner = reactions.get(enterSymbol).users.get(entries.get(rn(options).toString));
-    // console.log(winner)
-}
+    var giveawayEndTime = (minutes) => {
+        let end = moment().add(minutes, 'm');
+        let hours = toNormalHours(end.hours());
+        return `${hours}:${end.minutes()}`;
+    }
+    let giveawayAnnounce = await message.channel.send({
+        "embed": {
+          "title": ":tada: **__A Giveaway has started!__** :tada:",
+          "color": 12390624,
+          "footer": {
+            "text": `Started at ${toNormalHours(moment().hours())}:${moment().minutes()}`
+          },
+          "image": {
+            "url": "https://image.prntscr.com/image/LD2JTcuOSNO2s-NFHf-lzQ.png"
+          },
+          "fields": [
+            {
+              "name": "Dont miss your chance to win!",
+              "value": `This giveaway ends at ${giveawayEndTime(args[0])}, so don't forget to enter!`
+            },
+            {
+              "name": "How to enter?",
+              "value": "React to this message with a :white_check_mark:"
+            }
+          ]
+        }
+      });
+        await giveawayAnnounce.react(enterSymbol);
+    const reactions = await giveawayAnnounce.awaitReactions(reaction => reaction.emoji.name === enterSymbol, {time: args[0]*60000});
+    let reactInfo = await reactions.get(enterSymbol);
+    let entries = reactInfo.users;
+    function generateRandomNumber(max) {
+        let num = Math.floor(Math.random() * max) + 1;
+        if(num === 0){
+            num++;
+        }
+        if(num > reactInfo.count-1){
+            num--;
+        }
+        return num;
+    }
+    let winningNumber = generateRandomNumber(reactInfo.count);
+    let currentNumber = 0;
+    console.log(`users entered: ${reactInfo.count}`);
+    console.log(`winning number: ${winningNumber}`);
+    function getWinner(value, key, map) {
+        console.log(`current number ${currentNumber}`);
+        if(currentNumber == winningNumber){
+            currentNumber++;
+            message.channel.send("Times up! The winner is...");
+            sleep(2000);
+            message.channel.send("" + entries.get(key));
+            return;
+        } else {
+            currentNumber++;
+        }
+        console.log(`m[${key}] = ${value}`);
+    }
+    entries.forEach(getWinner);
+    // let winningUser = entries.get('134100066179874816');
+    // console.log(winningUser.username);
 
+}
 module.exports.help = {
     name: "giveaway",
     usage: "discord giveaways"

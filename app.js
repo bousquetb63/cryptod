@@ -27,7 +27,7 @@ fs.readdir("./cmds/", (err, files) => {
 
 
 bot.on('ready', async () => {
-  console.log(`Reporting for duty! ${bot.user.username}`);
+  console.log(`${bot.user.username} is Reporting for duty!`);
   console.log(bot.commands);
   try {
       let link = await bot.generateInvite(["ADMINISTRATOR"]);
@@ -42,10 +42,11 @@ bot.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     let messageArray = message.content.split(/\s+/g);
     let command = messageArray[0];
+    console.log(cryptocurrencies[command.slice(prefix.length).toUpperCase()]);
     let args = messageArray.slice(1);
     if(cryptocurrencies.symbols().includes(command.slice(prefix.length).toUpperCase())) {
         let cmd = bot.commands.get('pc');
-        let symbol = command.slice(prefix.length).toUpperCase()
+        let symbol = command.slice(prefix.length).toUpperCase();
         if(cmd) cmd.run(bot, message, cryptocurrencies[symbol]);
     } else {
         let cmd = bot.commands.get(command.slice(prefix.length));
@@ -53,4 +54,4 @@ bot.on('message', message => {
     }
 });
 
-bot.login('NDA4NzYyOTEzNDQ1MTE3OTU0.DVUxpQ.y6XMUNEGGxXFba3ae1zIWPToHyU');
+bot.login('NDA5Mzk4NzI0Mjc2NTE4OTEy.DVeByQ.kn6s9S-88JdFlKH5O3sc3g7Rcm8');

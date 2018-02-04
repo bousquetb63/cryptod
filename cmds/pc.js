@@ -1,6 +1,9 @@
+const request = require('superagent');
+const currencyFormatter = require('currency-formatter');
+const cryptocurrencies = require('cryptocurrencies');
+
 module.exports.run = async (bot, message, args) => {
-    const request = require('superagent');
-    const currencyFormatter = require('currency-formatter');
+
     let cryptoName = "";
     if(typeof args !== 'string'){
         if (args.length > 1) {
@@ -14,22 +17,27 @@ module.exports.run = async (bot, message, args) => {
         } else {
             cryptoName = args[0];
         }
+    } else {
+        cryptoName = args;
     }
+    let url = 'https://api.coinmarketcap.com/v1/ticker/' + cryptoName + '/';
     request
-        .get(`https://api.coinmarketcap.com/v1/ticker/${cryptoName}/`)
+        .get(url)
         .end((err, res)=> {
             if (res.status == 404) {
                 message.channel.send(`Encountered error when seaching for ${cryptoName}! Please check spelling.`);
                 return;
             }
             let data = res.body[0];
+            console.log(data);
             let price = currencyFormatter.format(data.price_usd, { code: 'USD' });
             let mc = currencyFormatter.format(data.market_cap_usd, { code: 'USD' });
             
             message.channel.send({embed: {
                  color: 3447003, 
                  title: "According to CoinMarketCap",
-                 url: "https://coinmarketcap.com/currencies/" + cryptoName,
+                 url: "https://api.coinmarketcap.com/v1/ticker/" + cryptoName,
+                 description: `***Pricing information for ${cryptoName} [${data.symbol}]:***`,
                  fields: [{
                     name: "**__Rank__**:",
                     value: data.rank
