@@ -17,13 +17,13 @@ module.exports.run = async (bot, message, args) => {
           },
           {
             name: "$giveaway",
-            value: "Usage: $giveaway <amount of time for entry>\nExample: Workin on it right now.."
+            value: "Usage: $giveaway <amount of minutes for entry>\nExample: $giveaway 5"
           }
         ],
         timestamp: new Date(),
         footer: {
         icon_url: bot.user.avatarURL,
-        text: "Made by Kulipie"
+        text: "Made by 𝕺𝖘𝖈𝖆𝖗™"
         }
       }})
 }

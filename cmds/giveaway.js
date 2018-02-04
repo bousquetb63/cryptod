@@ -15,17 +15,25 @@ module.exports.run = async (bot, message, args) => {
             return hours;
         }
     }
+    var toNormalMinutes = (minutes) => {
+        if (minutes < 10) {
+            return "0" + minutes;
+        } else {
+            return minutes;
+        }
+    }
     var giveawayEndTime = (minutes) => {
         let end = moment().add(minutes, 'm');
-        let hours = toNormalHours(end.hours());
-        return `${hours}:${end.minutes()}`;
+        let hour = toNormalHours(end.hours());
+        let minute = toNormalMinutes(end.minutes());
+        return `${hour}:${minute}`;
     }
     let giveawayAnnounce = await message.channel.send({
         "embed": {
           "title": ":tada: **__A Giveaway has started!__** :tada:",
           "color": 12390624,
           "footer": {
-            "text": `Started at ${toNormalHours(moment().hours())}:${moment().minutes()}`
+            "text": `Started at ${toNormalHours(moment().hours())}:${toNormalMinutes(moment().minutes())}`
           },
           "image": {
             "url": "https://image.prntscr.com/image/LD2JTcuOSNO2s-NFHf-lzQ.png"
@@ -42,7 +50,7 @@ module.exports.run = async (bot, message, args) => {
           ]
         }
       });
-        await giveawayAnnounce.react(enterSymbol);
+    await giveawayAnnounce.react(enterSymbol);
     const reactions = await giveawayAnnounce.awaitReactions(reaction => reaction.emoji.name === enterSymbol, {time: args[0]*60000});
     let reactInfo = await reactions.get(enterSymbol);
     let entries = reactInfo.users;
@@ -58,10 +66,7 @@ module.exports.run = async (bot, message, args) => {
     }
     let winningNumber = generateRandomNumber(reactInfo.count);
     let currentNumber = 0;
-    console.log(`users entered: ${reactInfo.count}`);
-    console.log(`winning number: ${winningNumber}`);
     function getWinner(value, key, map) {
-        console.log(`current number ${currentNumber}`);
         if(currentNumber == winningNumber){
             currentNumber++;
             message.channel.send("Times up! The winner is...");
@@ -74,9 +79,6 @@ module.exports.run = async (bot, message, args) => {
         console.log(`m[${key}] = ${value}`);
     }
     entries.forEach(getWinner);
-    // let winningUser = entries.get('134100066179874816');
-    // console.log(winningUser.username);
-
 }
 module.exports.help = {
     name: "giveaway",
