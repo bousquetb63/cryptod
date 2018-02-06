@@ -28,6 +28,7 @@ fs.readdir("./cmds/", (err, files) => {
 
 bot.on('ready', async () => {
   console.log(`${bot.user.username} is Reporting for duty!`);
+  bot.user.setActivity(`$help for list of cmds`)
   console.log(bot.commands);
   try {
       let link = await bot.generateInvite(["ADMINISTRATOR"]);
@@ -37,21 +38,39 @@ bot.on('ready', async () => {
   }
 });
 
+
+bot.on
 // PM'ing bot
 bot.on('message', message => {
+    // bans if sends discord link
+    if(message.content.includes('di') && message.content.includes('cord') && message.content.includes('s') && message.content.includes('gg')){
+        let adminRole = message.guild.roles.find("name", "Owner");
+        if(!message.member.roles.has(adminRole.id)){
+            // let offender = message.guild.member(message.author);
+            // offender.ban();
+            message.delete();
+            message.reply('Do not advertise!');
+        }
+        return;
+    }
+
+
+    //Checks if message is a command and not a dm
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     let messageArray = message.content.split(/\s+/g);
     let command = messageArray[0];
     console.log(cryptocurrencies[command.slice(prefix.length).toUpperCase()]);
     let args = messageArray.slice(1);
+    //If it is a cryptocurrency symbol after $ then run pc the crypto currency
     if(cryptocurrencies.symbols().includes(command.slice(prefix.length).toUpperCase())) {
         let cmd = bot.commands.get('pc');
         let symbol = command.slice(prefix.length).toUpperCase();
         if(cmd) cmd.run(bot, message, cryptocurrencies[symbol]);
     } else {
+    //Otherwise run command
         let cmd = bot.commands.get(command.slice(prefix.length));
         if(cmd) cmd.run(bot, message, args);
     }
 });
 
-bot.login('NDA5Mzk4NzI0Mjc2NTE4OTEy.DVeByQ.kn6s9S-88JdFlKH5O3sc3g7Rcm8');
+bot.login('NDA5NjI5NDY2OTkwNDc3MzIz.DVhYsw.2queOzGu6Zw9TfCQCi0r8_28ufU');

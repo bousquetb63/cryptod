@@ -29,7 +29,7 @@ module.exports.run = async (bot, message, args) => {
                 return;
             }
             let data = res.body[0];
-            console.log(data);
+            // console.log(data);
             let price = currencyFormatter.format(data.price_usd, { code: 'USD' });
             let mc = currencyFormatter.format(data.market_cap_usd, { code: 'USD' });
             
@@ -54,7 +54,7 @@ module.exports.run = async (bot, message, args) => {
                 timestamp: new Date(),
                 footer: {
                 icon_url: bot.user.avatarURL,
-                text: "LGD BOSS"
+                text: "Offical Bot"
                 }
             }});
         });

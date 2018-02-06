@@ -28,6 +28,7 @@ module.exports.run = async (bot, message, args) => {
         let minute = toNormalMinutes(end.minutes());
         return `${hour}:${minute}`;
     }
+    countdownMessage()
     let giveawayAnnounce = await message.channel.send({
         "embed": {
           "title": ":tada: **__A Giveaway has started!__** :tada:",
