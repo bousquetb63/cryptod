@@ -1,5 +1,5 @@
 # cryptod
-discord bot for cryptod
-#Todo
+discord bot for oscar.
+## Todo
 - Role assigner
 - Welcome image

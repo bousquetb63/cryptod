@@ -3,11 +3,21 @@ const fs = require('fs');
 const cryptocurrencies = require('cryptocurrencies');
 const sleep = require('system-sleep');
 const bot = new Discord.Client({disableEveryone: true});
-const prefix = '$';
+const settings = require('./settings.json');
+const prefix = settings.public.commandPrefix;
+const mongoose = require('mongoose');
+const mongo = require('mongodb');
 
+var mongoConnect = "mongodb://" + settings.secret.mongo.db_user +":"
+                                + settings.secret.mongo.db_password + "@"
+                                + settings.secret.mongo.url + "/"
+                                + settings.secret.mongo.db;
 
+mongoose.connect(mongoConnect);
+var db = mongoose.connection;
+// init bot commands
 bot.commands = new Discord.Collection();
-
+// load in bot commands
 fs.readdir("./cmds/", (err, files) => {
     if(err) console.error(err);
 
@@ -25,10 +35,10 @@ fs.readdir("./cmds/", (err, files) => {
     });
 });
 
-
+//Run when bot ready
 bot.on('ready', async () => {
   console.log(`${bot.user.username} is Reporting for duty!`);
-  bot.user.setActivity(`$help for list of cmds`)
+  bot.user.setActivity(`${prefix}help for list of cmds`)
   console.log(bot.commands);
   try {
       let link = await bot.generateInvite(["ADMINISTRATOR"]);
@@ -38,13 +48,23 @@ bot.on('ready', async () => {
   }
 });
 
+// on member join
+bot.on('guildMemberAdd', member => {
+    member.addRole(member.guild.roles.find("name", "Members"));
+    console.log(member.client);
+});
 
-bot.on
-// PM'ing bot
+// on message on server
 bot.on('message', message => {
+    
+    if (message.content.includes(prefix + 'giveaway')){
+        let adminRole = message.guild.roles.find("name", "Owner");
+        if(!message.member.roles.has(adminRole.id)){
+            return;
+        }
+    }
     // bans if sends discord link
     if(message.content.includes('di') && message.content.includes('cord') && message.content.includes('s') && message.content.includes('gg')){
-        let adminRole = message.guild.roles.find("name", "Owner");
         if(!message.member.roles.has(adminRole.id)){
             // let offender = message.guild.member(message.author);
             // offender.ban();
@@ -59,7 +79,7 @@ bot.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     let messageArray = message.content.split(/\s+/g);
     let command = messageArray[0];
-    console.log(cryptocurrencies[command.slice(prefix.length).toUpperCase()]);
+
     let args = messageArray.slice(1);
     //If it is a cryptocurrency symbol after $ then run pc the crypto currency
     if(cryptocurrencies.symbols().includes(command.slice(prefix.length).toUpperCase())) {
@@ -72,5 +92,5 @@ bot.on('message', message => {
         if(cmd) cmd.run(bot, message, args);
     }
 });
-
-bot.login('NDA5NjI5NDY2OTkwNDc3MzIz.DVhYsw.2queOzGu6Zw9TfCQCi0r8_28ufU');
+// login bot with token
+bot.login(settings.secret.botToken);
