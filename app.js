@@ -5,16 +5,7 @@ const sleep = require('system-sleep');
 const bot = new Discord.Client({disableEveryone: true});
 const settings = require('./settings.json');
 const prefix = settings.public.commandPrefix;
-const mongoose = require('mongoose');
-const mongo = require('mongodb');
 
-var mongoConnect = "mongodb://" + settings.secret.mongo.db_user +":"
-                                + settings.secret.mongo.db_password + "@"
-                                + settings.secret.mongo.url + "/"
-                                + settings.secret.mongo.db;
-
-mongoose.connect(mongoConnect);
-var db = mongoose.connection;
 // init bot commands
 bot.commands = new Discord.Collection();
 // load in bot commands
@@ -39,7 +30,6 @@ fs.readdir("./cmds/", (err, files) => {
 bot.on('ready', async () => {
   console.log(`${bot.user.username} is Reporting for duty!`);
   bot.user.setActivity(`${prefix}help for list of cmds`)
-  console.log(bot.commands);
   try {
       let link = await bot.generateInvite(["ADMINISTRATOR"]);
       console.log(link);
@@ -51,12 +41,33 @@ bot.on('ready', async () => {
 // on member join
 bot.on('guildMemberAdd', member => {
     member.addRole(member.guild.roles.find("name", "Members"));
-    console.log(member.client);
+    member.send({
+        "embed": {
+            "title": "Welcome to Crypto Community Hub!",
+            "color": 9442302,
+            "timestamp": "2018-02-17T05:04:05.742Z",
+        
+            "fields": [
+            {
+                "name": "Earn roles:",
+                "value": "Use $ref <Username#Indentifier> message me who referred you **(Ex. $ref JonDoe#7040)** and get **2** free referal point!"
+            },
+            {
+                "name": "Join in crypto discussions:",
+                "value": "Join in engaging cryptocurrency related channels!"
+            },
+            {
+                "name": "Ask questions:",
+                "value": "Unsure what something is..?, ask away in the numerous channels available!"
+            }
+            ]
+        }
+    })
+    // console.log(member.guild.members.find(member => member.user.username === 'kulipie', discriminator => member.user.discriminator === '7010').user);
 });
 
 // on message on server
 bot.on('message', message => {
-    
     if (message.content.includes(prefix + 'giveaway')){
         let adminRole = message.guild.roles.find("name", "Owner");
         if(!message.member.roles.has(adminRole.id)){
